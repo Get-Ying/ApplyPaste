@@ -153,7 +153,7 @@ ApplyPaste 坚持：
 
 信息库、版本、附件和投递记录主要保存在当前浏览器本地。飞书同步只有在用户主动配置后才会启用。
 
-ApplyPaste 目前仍处于 Beta 阶段。重要资料请保留自己的 Word、PDF 原始文件，并建议定期导出完整备份。
+重要资料请保留自己的 Word、PDF 原始文件，并建议定期导出完整备份。
 
 ## 📖 文档
 
@@ -190,6 +190,8 @@ ApplyPaste/
 
 **ApplyPaste v0.1 Beta**
 
+Beta 版本：当前已覆盖核心网申流程，欢迎反馈实际使用中的问题。
+
 当前目标是让求职者能够稳定完成：
 
 **资料整理 → 网申复制 → 版本管理 → 投递记录**
@@ -199,18 +201,6 @@ ApplyPaste/
 - Microsoft Edge / Chromium 浏览器
 - 中文校招、秋招及其他高频网申场景
 - 使用 Word 简历的用户
-- 小范围 Beta 测试
-
-## ⚠️ Beta 已知限制
-
-目前仍可能遇到：
-
-- 特殊 Word 排版识别不准确
-- 某些招聘网站的岗位信息识别不完整
-- DOCX 预览与 Word 原版存在差异
-- 不同招聘网站仍需人工确认部分字段
-
-出现识别错误时，可以直接在 ApplyPaste 中人工编辑，不影响信息库继续使用。
 
 ## 💬 反馈问题
 
@@ -227,4 +217,4 @@ ApplyPaste/
 
 **整理一次，需要的时候直接找到、复制、填写。**
 
-`Local First · Browser Extension · Public Beta`
+`Local First · Browser Extension`

@@ -1,0 +1,18 @@
+{
+  "name": "apply-paste",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "self-check": "node tools/self-check.js",
+    "test:isolation": "node tests/test-applypaste-isolation.mjs",
+    "test:word-import": "node tests/test-word-import-smoke.mjs",
+    "test:field-guide": "node tests/test-field-guide.mjs",
+    "test:sidepanel-pin": "node tests/test-sidepanel-pin.mjs",
+    "test:p1-core": "node tests/test-p1-core.mjs",
+    "test:feature-parity": "node tests/test-feature-parity.mjs",
+    "test:e2e": "node tests/test-public-release.mjs",
+    "test:public-build": "node tests/test-public-build.mjs",
+    "privacy-scan": "node tools/privacy-scan.mjs",
+    "build:public": "node tools/build-public.mjs"
+  }
+}

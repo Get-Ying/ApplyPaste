@@ -1,0 +1,18 @@
+{
+  "currentVersion": "general",
+  "celebration": true,
+  "versions": [
+    {
+      "id": "general",
+      "name": "通用版",
+      "fieldOverrides": {},
+      "itemOverrides": {},
+      "projectOrder": [],
+      "skillOrder": [],
+      "skillFieldOrders": {},
+      "attachmentOrder": [],
+      "defaultResumeId": null,
+      "defaultAttachmentIds": []
+    }
+  ]
+}

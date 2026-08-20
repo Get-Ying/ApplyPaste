@@ -1,0 +1,668 @@
+[hidden] {
+  display: none !important;
+}
+
+.versionActions,
+.differenceToggle,
+.fieldStatusActions,
+.dialogHeader > div {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.versionActions button {
+  min-width: 32px;
+  padding: 0 7px;
+}
+
+.toolbarRow {
+  flex-wrap: wrap;
+}
+
+.fileActions {
+  margin-left: auto;
+}
+
+.differenceBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 7px;
+  padding-top: 7px;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+}
+
+.differenceToggle button {
+  min-height: 28px;
+  padding: 0 8px;
+  font-size: 12px;
+}
+
+.differenceToggle button.active {
+  color: var(--accent);
+  border-color: #bfd4ff;
+  background: var(--accent-soft);
+}
+
+#saveStatus {
+  color: var(--success);
+}
+
+#saveStatus.saving {
+  color: var(--warn);
+}
+
+#saveStatus.failed {
+  color: var(--danger);
+}
+
+.fieldRow {
+  grid-template-columns: 22px 108px minmax(0, 1fr) 62px 40px;
+}
+
+.fieldScope {
+  align-self: center;
+  min-height: 24px;
+  padding: 0 5px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 999px;
+  background: #f0f2f6;
+  color: var(--muted);
+  font-size: 11px;
+  text-overflow: ellipsis;
+}
+
+.fieldScope.override {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.differenceCard {
+  border-color: #9dbcf8;
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.defaultAttachment {
+  border-color: #86b7a3;
+  box-shadow: inset 3px 0 0 var(--success);
+}
+
+.attachmentRow {
+  grid-template-columns: 22px minmax(0, 1fr);
+}
+
+.attachmentInfo span {
+  white-space: normal;
+}
+
+.attachmentActions {
+  grid-column: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.attachmentActions button,
+.attachmentMore summary {
+  min-height: 28px;
+  padding: 3px 8px;
+  font-size: 12px;
+}
+
+.attachmentMore {
+  position: relative;
+}
+
+.attachmentMore summary {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.attachmentMoreMenu {
+  position: absolute;
+  right: 0;
+  z-index: 5;
+  display: grid;
+  gap: 4px;
+  width: 180px;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel);
+  box-shadow: 0 8px 22px rgba(15, 23, 42, .15);
+}
+
+.attachmentMoreMenu button { text-align: left; }
+.verifiedAttachment { color: var(--success); font-weight: 600; }
+
+.attachmentVersions {
+  margin: 0;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+.attachmentVersions legend { color: var(--muted); }
+.attachmentVersions .checkboxLabel { margin-top: 5px; }
+
+.attachmentPreviewPanel,
+.attachmentReplacePanel,
+.attachmentUsePanel {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+}
+
+.attachmentPreviewDialog {
+  width: min(760px, calc(100vw - 20px));
+  height: min(620px, calc(100vh - 24px));
+}
+
+.attachmentPreviewToolbar {
+  display: grid;
+  grid-template-columns: auto auto auto 1fr auto auto auto;
+  gap: 6px;
+  align-items: center;
+}
+
+.attachmentPreviewBody {
+  min-height: 320px;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #eef1f5;
+}
+
+.attachmentPreviewBody iframe { width: 100%; height: 100%; min-height: 390px; border: 0; background: #fff; }
+.attachmentPreviewBody img { display: block; max-width: none; margin: 0 auto; transform-origin: top center; }
+.attachmentPreviewBody pre { margin: 0; padding: 16px; white-space: pre-wrap; overflow-wrap: anywhere; background: #fff; min-height: 100%; }
+.unsupportedPreview { display: grid; place-items: center; min-height: 320px; padding: 24px; color: var(--muted); text-align: center; }
+.attachmentPreviewActions { display: flex; justify-content: space-between; align-items: center; }
+.replaceComparison { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.replaceComparison section { display: grid; gap: 4px; padding: 10px; border: 1px solid var(--line); border-radius: 6px; overflow-wrap: anywhere; }
+.replaceComparison span,.replaceComparison small { color: var(--muted); }
+
+.dataImportMenu { position: relative; }
+.dataImportMenu > summary { display: flex; align-items: center; min-height: 32px; padding: 0 10px; border: 1px solid var(--line); border-radius: 6px; cursor: pointer; list-style: none; }
+.dataImportMenu > div { position: absolute; z-index: 10; display: grid; gap: 5px; width: 210px; padding: 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); box-shadow: 0 8px 22px rgba(15,23,42,.15); }
+.dataImportMenu strong { margin-top: 3px; color: var(--muted); font-size: 11px; }
+.dataImportMenu button { text-align: left; }
+
+.resumeImportDialog { width: min(720px, calc(100vw - 24px)); }
+.resumeImportPanel { display: grid; gap: 10px; padding: 14px; }
+.resumeImportSummary { display: flex; flex-wrap: wrap; gap: 6px; }
+.resumeImportSummary span { padding: 4px 8px; border-radius: 999px; background: #f0f2f6; color: var(--muted); font-size: 12px; }
+.resumeImportOptions { display: grid; grid-template-columns: minmax(180px, 1fr) 1fr; gap: 10px; align-items: end; }
+.resumeImportList { display: grid; gap: 8px; max-height: 330px; overflow-y: auto; }
+.resumeImportItem { display: grid; gap: 7px; padding: 9px; border: 1px solid var(--line); border-radius: 7px; }
+.resumeImportItemHeader { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 7px; align-items: start; }
+.resumeImportItemHeader input { margin-top: 4px; }
+.resumeImportItemHeader span { color: var(--success); font-size: 12px; }
+.resumeImportItemHeader span.confirm { color: var(--warn); }
+.resumeImportSource { max-height: 100px; margin: 0; overflow-y: auto; white-space: pre-wrap; overflow-wrap: anywhere; color: #344054; font: 12px/1.5 inherit; }
+.resumeImportDecision { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.resumeImportDecision label { font-size: 11px; }
+.resumeMatchNotice { padding: 6px 8px; border-left: 3px solid var(--warn); background: #fff8e6; font-size: 12px; }
+.sidepanelMode .resumeImportDialog { width: calc(100% - 12px); }
+.sidepanelMode .resumeImportOptions,.sidepanelMode .resumeImportDecision { grid-template-columns: 1fr; }
+
+.compareBlock {
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+.compareBlock p {
+  margin-top: 5px;
+  white-space: pre-wrap;
+  color: #263248;
+}
+
+.fieldStatusManager {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+}
+
+.fieldStatusActions {
+  justify-content: flex-end;
+}
+
+.dialogHeader > div .primary {
+  padding: 0 8px;
+}
+
+.moreSettings {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.moreSettings summary {
+  cursor: pointer;
+}
+
+.moreSettings label {
+  margin-top: 7px;
+}
+
+.detailGrid {
+  margin-top: 8px;
+}
+
+.mappingFields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+  margin-top: 8px;
+  max-height: 210px;
+  overflow-y: auto;
+}
+
+.mappingFields label {
+  margin: 0;
+}
+
+.recordsManager,
+.syncResultManager {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+}
+
+.recordsList {
+  display: grid;
+  gap: 8px;
+  max-height: 470px;
+  overflow-y: auto;
+}
+
+.recordsButton {
+  position: relative;
+}
+
+.recordBadge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border: 2px solid var(--panel);
+  border-radius: 9px;
+  background: var(--danger);
+  color: #fff;
+  font-size: 10px;
+  line-height: 14px;
+  text-align: center;
+}
+
+.recordFilters {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 8px;
+}
+
+.recordFilters select,
+.recordFilters input {
+  min-width: 0;
+  padding: 7px 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+.recordMetadata {
+  display: grid;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.recordMetadata > div {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 8px;
+}
+
+.recordMetadata span {
+  color: var(--muted);
+}
+
+.resumeRecordPanel {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+}
+
+.resumeRecordActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.recordRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  padding: 9px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--panel);
+}
+
+.recordMain {
+  min-width: 0;
+}
+
+.recordMain strong,
+.recordMain span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recordMain span,
+.recordSync {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.recordSync.synced {
+  color: var(--success);
+}
+
+.recordSync.failed,
+.recordSync.unknown {
+  color: var(--danger);
+}
+
+.recordActions {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 5px;
+  align-content: start;
+}
+
+.recordActions button {
+  min-height: 27px;
+  padding: 0 7px;
+  font-size: 12px;
+}
+
+.syncResultActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 7px;
+}
+
+#localEditWarning {
+  color: var(--warn);
+}
+
+.topActions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.dataSettings {
+  display: grid;
+  gap: 7px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.dataSettings h3,
+#feishuForm > h3 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.dataSettingsActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.dataSettingsActions button:last-child {
+  grid-column: 1 / -1;
+}
+
+#feishuForm {
+  max-height: 558px;
+  overflow-y: auto;
+}
+
+.quickNavigation {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  align-items: end;
+  gap: 7px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+}
+
+.quickNavigation label {
+  flex: 1;
+  min-width: 0;
+}
+
+.quickNavigation select {
+  width: 100%;
+  min-width: 0;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+.navigationHighlight {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
+.notice {
+  position: fixed;
+  top: 64px;
+  right: 12px;
+  z-index: 50;
+  max-width: min(360px, calc(100% - 24px));
+  box-shadow: 0 6px 18px rgba(15, 23, 42, .12);
+}
+
+.sidepanelCategoryControl {
+  padding: 8px 12px 0;
+  background: var(--panel);
+}
+
+.sidepanelCategoryControl select {
+  width: 100%;
+  padding: 7px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+body.workbenchMode {
+  width: 100vw;
+  height: 100vh;
+}
+
+body.sidepanelMode {
+  width: 100%;
+  height: 100vh;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.sidepanelMode .topbar {
+  padding: 8px 10px;
+}
+
+.sidepanelMode .brand img {
+  width: 32px;
+  height: 32px;
+}
+
+.sidepanelMode .brand p,
+.sidepanelMode #pinSidePanelBtn,
+.sidepanelMode #feishuSettingsBtn,
+.sidepanelMode #manageCategoriesBtn,
+.sidepanelMode #newItemBtn,
+.sidepanelMode .versionActions,
+.sidepanelMode .fileActions,
+.sidepanelMode .differenceBar {
+  display: none;
+}
+
+.sidepanelMode .toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 10px;
+}
+
+.sidepanelMode .toolbarRow {
+  order: 1;
+  margin: 0;
+}
+
+.sidepanelMode #searchInput {
+  order: 2;
+}
+
+.sidepanelMode .inlineLabel {
+  width: 100%;
+}
+
+.sidepanelMode .inlineLabel select {
+  flex: 1;
+  min-width: 0;
+}
+
+.sidepanelMode .workspace {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.sidepanelMode .tabs {
+  display: none;
+}
+
+.sidepanelMode .contentPane,
+.sidepanelMode main,
+.sidepanelMode .card,
+.sidepanelMode .cardContent,
+.sidepanelMode .fieldValue {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.sidepanelMode .fieldRow {
+  grid-template-columns: 92px minmax(0, 1fr) 42px;
+}
+
+.sidepanelMode .fieldRow .dragHandle,
+.sidepanelMode .fieldScope,
+.sidepanelMode .cardActions button:not(.copyBtn):not(.sidepanelAddField):not(.sidepanelItemEdit),
+.sidepanelMode .attachmentRow > .dragHandle {
+  display: none;
+}
+
+.sidepanelMode .fieldEdit,
+.sidepanelMode .sidepanelAddField,
+.sidepanelMode .sidepanelItemEdit {
+  color: var(--accent);
+  opacity: .38;
+  transition: opacity .15s ease;
+}
+
+.sidepanelMode .fieldRow:hover .fieldEdit,
+.sidepanelMode .fieldRow:focus-within .fieldEdit,
+.sidepanelMode .card:hover .sidepanelAddField,
+.sidepanelMode .card:hover .sidepanelItemEdit,
+.sidepanelMode .sidepanelAddField:focus-visible,
+.sidepanelMode .sidepanelItemEdit:focus-visible {
+  opacity: 1;
+}
+
+.sidepanelMode #fieldEditorDialog,
+.sidepanelMode #editorDialog {
+  width: calc(100% - 20px);
+  max-height: calc(100vh - 28px);
+}
+
+.sidepanelMode #fieldEditorDialog #deleteFieldBtn,
+.sidepanelMode #fieldEditorDialog #duplicateFieldBtn,
+.sidepanelMode #editorDialog #deleteItemBtn,
+.sidepanelMode #editorDialog #duplicateItemBtn,
+.sidepanelMode #editorDialog label:has(#editCategory),
+.sidepanelMode #editorDialog label:has(#editTags),
+.sidepanelMode #fieldEditorDialog:not(.addingField) .moreSettings {
+  display: none;
+}
+
+.sidepanelMode #fieldEditorDialog .fieldDialogActions,
+.sidepanelMode #editorDialog .dialogActions {
+  grid-template-columns: 1fr auto auto;
+}
+
+.sidepanelMode #fieldEditorDialog .fieldDialogActions > span,
+.sidepanelMode #editorDialog .dialogActions > span {
+  display: block;
+}
+
+.discardChangesPanel {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+}
+
+.discardChangesActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.sidepanelMode .attachmentRow {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.sidepanelMode .attachmentRow .attachmentInfo,
+.sidepanelMode .attachmentRow .attachmentActions { grid-column: 1 / -1; }
+.sidepanelMode .attachmentPreviewDialog { width: calc(100% - 12px); height: calc(100vh - 16px); }
+.sidepanelMode .attachmentPreviewBody { min-height: 0; }
+.sidepanelMode .attachmentPreviewBody iframe { min-height: 55vh; }
+.sidepanelMode .attachmentPreviewToolbar { grid-template-columns: repeat(3, auto); }
+.sidepanelMode .attachmentPreviewToolbar > span:not(#previewPageLabel) { display: none; }
+.sidepanelMode .replaceComparison { grid-template-columns: 1fr; }
+
+.sidepanelMode dialog,
+.sidepanelMode dialog.wideDialog {
+  width: calc(100% - 20px);
+  max-width: 520px;
+}
+
+.sidepanelMode .submissionBar {
+  padding: 7px 10px;
+}
+
+.submissionBar {
+  grid-template-columns: 1fr 1fr 1.25fr;
+}
+
+.sidepanelMode .topActions {
+  flex-wrap: nowrap;
+}
+
+.sidepanelMode #recordsBtn {
+  padding: 0 7px;
+  font-size: 12px;
+}

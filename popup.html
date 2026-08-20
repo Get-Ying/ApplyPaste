@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ApplyPaste</title>
+    <link rel="stylesheet" href="src/popup.css">
+    <link rel="stylesheet" href="src/version.css">
+    <link rel="stylesheet" href="src/tokens.css">
+    <link rel="stylesheet" href="src/apple-theme.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <img src="icons/job-paste.png" alt="">
+        <div><h1>ApplyPaste</h1><p><span id="fileStatus">正在载入内部数据</span> · <span id="saveStatus">已保存</span></p></div>
+      </div>
+      <div class="topActions">
+        <button id="pinSidePanelBtn" title="在当前窗口固定侧边栏">固定</button>
+        <button id="recordsBtn" class="recordsButton" title="查看投递记录">投递记录<span id="pendingRecordBadge" class="recordBadge" hidden></span></button>
+        <button id="feishuSettingsBtn" title="飞书同步设置">设置</button>
+        <button id="manageCategoriesBtn" title="管理分类与顺序">分类</button>
+        <button id="newItemBtn" class="primary" title="在当前分类添加一张资料卡片">添加条目</button>
+        <button id="openWorkbenchBtn" class="primary" hidden>打开完整工作台</button>
+      </div>
+    </header>
+
+    <section class="toolbar">
+      <input id="searchInput" type="search" placeholder="搜索字段、关键词、项目、开放题">
+      <div class="toolbarRow">
+        <label class="inlineLabel">当前填写版本
+          <select id="currentVersion"></select>
+        </label>
+        <div class="versionActions" aria-label="版本管理">
+          <button id="addVersionBtn" title="新建填写版本">新建版本</button>
+          <details class="versionMore"><summary title="更多版本操作">···</summary><div><button id="moveVersionUpBtn" title="当前版本上移">上移</button><button id="moveVersionDownBtn" title="当前版本下移">下移</button><button id="renameVersionBtn" title="重命名当前版本">重命名</button><button id="copyVersionBtn" title="复制当前版本差异">复制版本</button><button id="deleteVersionBtn" class="danger" title="删除当前版本">删除版本</button></div></details>
+        </div>
+      </div>
+      <div id="differenceBar" class="differenceBar">
+        <strong id="differenceSummary">通用版</strong>
+        <div class="differenceToggle">
+          <button id="showAllBtn" class="active">全部</button>
+          <button id="showDifferencesBtn">本版本差异</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="workspace">
+      <nav id="categoryTabs" class="tabs" aria-label="信息分类"></nav>
+      <div id="contentPane" class="contentPane">
+        <section id="sidepanelStickyNavigation" class="sidepanelStickyNavigation" hidden></section>
+        <section id="sidepanelCategoryControl" class="sidepanelOnly sidepanelCategoryControl" hidden><label>分类<select id="sidepanelCategory"></select></label></section>
+        <section id="quickNavigation" class="quickNavigation" hidden><label>快速定位<select id="quickNavigationSelect"><option value="">选择内容</option></select></label><button id="quickNavigationTop" type="button">回到顶部</button></section>
+        <section id="attachmentPanel" class="attachmentPanel" hidden>
+          <div class="attachmentIntro">
+            <div><strong>附件库</strong><span>附件保存在当前 Edge 浏览器中</span></div>
+            <button id="addAttachmentBtn" class="primary">+ 附件</button>
+          </div>
+          <div id="attachmentList" class="attachmentList"></div>
+        </section>
+        <main>
+          <section id="list" class="list" aria-live="polite"></section>
+          <section id="empty" class="empty" hidden>
+            <strong>还没有匹配内容</strong>
+            <span>可以手动建立资料，或从自己的 Word 简历开始。</span>
+            <div><button id="emptyNewItemBtn" type="button" class="primary">手动添加条目</button><button id="emptyResumeImportBtn" type="button">导入 Word 简历</button></div>
+          </section>
+        </main>
+      </div>
+    </div>
+    <div id="notice" class="notice" hidden></div>
+
+    <footer class="submissionBar">
+      <button id="laterBtn">稍后继续</button>
+      <button id="abortBtn" class="abortButton">放弃投递</button>
+      <button id="completeBtn" class="completeButton">投递完成</button>
+    </footer>
+
+    <dialog id="editorDialog">
+      <form method="dialog" id="editorForm">
+        <header class="dialogHeader"><h2 id="editorTitle">新增条目</h2><button value="cancel" formnovalidate class="iconButton" title="关闭">x</button></header>
+        <label>分类<select id="editCategory"></select></label>
+        <label>标题<input id="editTitle" required></label>
+        <label>标签<input id="editTags" placeholder="用空格或逗号分隔"></label>
+        <section id="itemFieldGuide" class="fieldGuide" aria-live="polite"></section>
+        <label>内容<textarea id="editContent" required rows="8"></textarea></label>
+        <p id="itemEditorHint" class="formHint">每行填写“字段名：答案”，会自动拆分为可单独复制和编辑的字段。</p>
+        <div class="dialogActions">
+          <button id="deleteItemBtn" type="button" class="danger">删除条目</button>
+          <button id="duplicateItemBtn" type="button">复制条目</button>
+          <span></span><button value="cancel" formnovalidate type="submit">取消</button><button value="default" type="submit" class="primary">保存</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="categoryDialog">
+      <div class="categoryManager">
+        <header class="dialogHeader"><h2>管理分类与顺序</h2><button id="closeCategoryBtn" class="iconButton" title="关闭">x</button></header>
+        <p class="formHint">拖动左侧把手可调整分类顺序。</p>
+        <div id="categoryNotice" class="managerNotice" hidden></div>
+        <div id="categoryList" class="categoryList"></div>
+        <div class="newCategoryRow"><input id="newCategoryName" placeholder="新分类名称" maxlength="16"><button id="addCategoryBtn" class="primary">添加分类</button></div>
+      </div>
+    </dialog>
+
+    <dialog id="fieldEditorDialog" class="wideDialog">
+      <form method="dialog" id="fieldEditorForm">
+        <header class="dialogHeader"><h2 id="fieldEditorTitle">编辑字段</h2><button value="cancel" formnovalidate class="iconButton" title="关闭">x</button></header>
+        <label>字段名<input id="fieldEditLabel" required></label>
+        <div id="fieldEditorCommonBlock" class="compareBlock" hidden><strong>通用答案</strong><p id="fieldEditorCommonPreview"></p><button id="useCommonFieldAnswerBtn" type="button" title="删除当前填写版本的单独修改，重新显示通用答案">恢复使用通用答案</button></div>
+        <label><span id="fieldValueLabel">通用答案</span><textarea id="fieldEditValue" required rows="5"></textarea></label>
+        <details class="moreSettings"><summary>更多设置</summary><label class="checkboxLabel"><input id="fieldVersioned" type="checkbox">允许该字段按版本分别填写</label></details>
+        <p id="fieldEditorHint" class="formHint"></p>
+        <div class="fieldDialogActions"><button id="deleteFieldBtn" type="button" class="danger">删除字段</button><button id="duplicateFieldBtn" type="button">复制字段</button><span></span><button value="cancel" formnovalidate type="submit">取消</button><button value="default" type="submit" class="primary">保存</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="discardChangesDialog">
+      <div class="discardChangesPanel">
+        <strong>放弃本次修改？</strong>
+        <div class="discardChangesActions"><button id="continueEditingBtn" type="button">继续编辑</button><button id="discardChangesBtn" type="button" class="danger">放弃修改</button></div>
+      </div>
+    </dialog>
+
+    <dialog id="attachmentDialog">
+      <form method="dialog" id="attachmentForm">
+        <header class="dialogHeader"><h2 id="attachmentDialogTitle">新增附件</h2><button value="cancel" formnovalidate class="iconButton" title="关闭">x</button></header>
+        <label>显示名称<input id="attachmentTitle" required></label>
+        <label>附件类型<select id="attachmentCategory"><option>简历</option><option>成绩单</option><option>成绩排名证明</option><option>获奖证明</option><option>学历/学籍材料</option><option>论文/成果证明</option><option>身份材料</option><option>语言证明</option><option>其他</option></select></label>
+        <fieldset class="attachmentVersions"><legend>适用填写版本</legend><p class="formHint">不选择表示适用于全部版本。</p><div id="attachmentVersionOptions"></div></fieldset>
+        <label>标签<input id="attachmentTags" placeholder="用空格或逗号分隔"></label>
+        <label class="checkboxLabel"><input id="attachmentSensitive" type="checkbox">敏感附件，上传前再次确认</label>
+        <label id="attachmentDefaultLabel" class="checkboxLabel"><input id="attachmentDefault" type="checkbox">设为当前版本默认附件</label>
+        <div class="dialogActions"><button id="deleteAttachmentBtn" type="button" class="danger">删除附件</button><span></span><button value="cancel" formnovalidate type="submit">取消</button><button value="default" type="submit" class="primary">保存</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="attachmentPreviewDialog" class="wideDialog attachmentPreviewDialog">
+      <div class="attachmentPreviewPanel">
+        <header class="dialogHeader"><div><h2 id="attachmentPreviewTitle">附件预览</h2><span id="attachmentPreviewMeta" class="formHint"></span></div><button id="closeAttachmentPreviewBtn" class="iconButton" title="关闭">x</button></header>
+        <p id="docxPreviewWarning" class="managerNotice" hidden>Word预览仅供核对内容，实际排版可能与原文件存在差异。</p>
+        <div id="attachmentPreviewToolbar" class="attachmentPreviewToolbar">
+          <button id="previewPrevBtn" type="button">上一页</button><span id="previewPageLabel">1 / 1</span><button id="previewNextBtn" type="button">下一页</button>
+          <span></span><button id="previewZoomOutBtn" type="button" title="缩小">-</button><button id="previewZoomInBtn" type="button" title="放大">+</button><button id="previewFitBtn" type="button">适应宽度</button>
+        </div>
+        <div id="attachmentPreviewBody" class="attachmentPreviewBody"></div>
+        <div class="attachmentPreviewActions"><span id="attachmentVerifiedStatus"></span><button id="markAttachmentVerifiedBtn" type="button" class="primary">标记已核对</button></div>
+      </div>
+    </dialog>
+
+    <dialog id="attachmentReplaceDialog">
+      <div class="attachmentReplacePanel">
+        <header class="dialogHeader"><h2>替换附件文件</h2><button id="closeAttachmentReplaceBtn" class="iconButton" title="关闭">x</button></header>
+        <div class="replaceComparison"><section><span>原文件</span><strong id="replaceOldFile"></strong></section><section><span>新文件</span><strong id="replaceNewFile"></strong><small id="replaceNewMeta"></small></section></div>
+        <div class="fieldDialogActions"><button id="previewReplacementBtn" type="button">预览新文件</button><span></span><button id="cancelReplacementBtn" type="button">取消</button><button id="confirmReplacementBtn" type="button" class="primary">确认替换</button></div>
+      </div>
+    </dialog>
+
+    <dialog id="attachmentUseDialog">
+      <div class="attachmentUsePanel">
+        <header class="dialogHeader"><h2>确认使用附件</h2><button id="closeAttachmentUseBtn" class="iconButton" title="关闭">x</button></header>
+        <p>即将使用：</p><strong id="attachmentUseName"></strong><p id="attachmentUseMeta" class="formHint"></p><p id="attachmentMismatchWarning" class="managerNotice" hidden>当前简历与填写版本不一致，请确认是否使用。</p>
+        <div class="fieldDialogActions"><button id="previewBeforeUseBtn" type="button">再次预览</button><span></span><button id="cancelAttachmentUseBtn" type="button">返回选择</button><button id="confirmAttachmentUseBtn" type="button" class="primary">确认使用</button></div>
+      </div>
+    </dialog>
+
+    <dialog id="resumeMismatchDialog">
+      <div class="attachmentUsePanel"><strong>当前简历与填写版本不一致，请确认是否使用。</strong><p id="resumeMismatchSummary" class="formHint"></p><div class="fieldDialogActions"><span></span><button id="cancelResumeMismatchBtn" type="button">返回选择</button><button id="confirmResumeMismatchBtn" type="button" class="primary">仍然使用</button></div></div>
+    </dialog>
+
+    <dialog id="resumeImportDialog" class="wideDialog resumeImportDialog">
+      <div class="resumeImportPanel">
+        <header class="dialogHeader"><div><h2>简历识别结果</h2><span id="resumeImportFile" class="formHint"></span></div><button id="closeResumeImportBtn" class="iconButton" title="关闭">x</button></header>
+        <div id="resumeImportSummary" class="resumeImportSummary"></div>
+        <div class="resumeImportOptions">
+          <label>目标填写版本<select id="resumeImportVersion"></select></label>
+          <label class="checkboxLabel"><input id="resumeImportDefault" type="checkbox">设置为该填写版本默认简历</label>
+        </div>
+        <section id="resumeDuplicatePanel" class="managerNotice" hidden><strong>该简历附件可能已经存在。</strong><label>附件处理<select id="resumeDuplicateAction"><option value="use">使用已有附件</option><option value="replace">替换已有附件</option><option value="new">仍然新增</option></select></label></section>
+        <div id="resumeImportList" class="resumeImportList"></div>
+        <div id="resumeImportError" class="managerNotice" hidden></div>
+        <div class="fieldDialogActions"><span></span><button id="cancelResumeImportBtn" type="button">取消</button><button id="confirmResumeImportBtn" type="button" class="primary">确认导入</button></div>
+      </div>
+    </dialog>
+
+    <datalist id="companySuggestions"></datalist>
+    <datalist id="locationSuggestions"></datalist>
+    <datalist id="industrySuggestions"></datalist>
+    <datalist id="roleSuggestions"></datalist>
+    <datalist id="resumeSuggestions"></datalist>
+
+    <dialog id="completeDialog" class="wideDialog">
+      <form method="dialog" id="completeForm">
+        <header class="dialogHeader"><h2 id="completeDialogTitle">投递完成</h2><button value="cancel" formnovalidate class="iconButton" title="关闭">x</button></header>
+        <div class="formGrid">
+          <label>公司名称<input id="completeCompany" list="companySuggestions" required></label><label>岗位名称<input id="completeJob" required></label>
+          <label>工作地点<input id="completeLocation" list="locationSuggestions" required></label><label>使用简历<input id="completeResume" list="resumeSuggestions" required placeholder="可选择或手动输入简历名称"></label>
+        </div>
+        <details class="moreSettings"><summary>更多信息</summary><div class="formGrid detailGrid"><label>行业<input id="completeIndustry" list="industrySuggestions"></label><label>岗位类别/方向<input id="completeRole" list="roleSuggestions"></label><label>实际投递渠道<input id="completeChannel"></label><label>招聘类型/批次<input id="completeBatch"></label><label>企业性质<input id="completeCompanyType"></label><label>投递优先级<select id="completePriority"><option value="">不填写</option><option>高</option><option>中</option><option>低</option></select></label><label>内推码<input id="completeReferralCode"></label><label>内推人<input id="completeReferrer" placeholder="内推人链接或昵称"></label></div></details>
+        <label>岗位链接<input id="completeUrl" type="url"></label>
+        <label>岗位 JD<textarea id="completeJd" rows="5"></textarea></label>
+        <label>备注<textarea id="completeNotes" rows="3"></textarea></label>
+        <div class="fieldDialogActions"><span></span><button value="cancel" formnovalidate type="submit">取消</button><button id="completeSubmitBtn" value="default" type="submit" class="primary">保存并同步</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="abortDialog" class="wideDialog">
+      <form method="dialog" id="abortForm">
+        <header class="dialogHeader"><h2>放弃投递</h2><button value="cancel" formnovalidate class="iconButton" title="关闭">x</button></header>
+        <div class="formGrid"><label>公司名称<input id="abortCompany" list="companySuggestions" required></label><label>岗位名称<input id="abortJob" required></label></div>
+        <label>工作地点<input id="abortLocation" list="locationSuggestions" required></label>
+        <label>岗位链接<input id="abortUrl" type="url"></label>
+        <label>放弃原因<select id="abortReason"><option value="">不填写</option><option>岗位不匹配</option><option>网页或系统异常</option><option>信息暂时缺失</option><option>不想继续投递</option><option>重复投递</option><option>其他</option></select></label>
+        <label>备注<textarea id="abortNotes" rows="3"></textarea></label>
+        <div class="fieldDialogActions"><span></span><button value="cancel" formnovalidate type="submit">取消</button><button value="default" type="submit" class="danger">确认放弃</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="feishuDialog" class="wideDialog">
+      <form method="dialog" id="feishuForm">
+        <header class="dialogHeader"><h2>设置</h2><button value="cancel" formnovalidate class="iconButton" title="关闭">x</button></header>
+        <section class="dataSettings">
+          <h3>数据管理</h3>
+          <p class="formHint">ApplyPaste 的数据默认保存在当前 Edge 浏览器中。卸载扩展或清除浏览器数据前，请先导出完整备份。</p>
+          <div class="dataSettingsActions"><details class="dataImportMenu"><summary>导入</summary><div><strong>从简历导入</strong><button id="resumeImportBtn" type="button">Word 简历 (.docx)</button><strong>从信息库导入</strong><button id="dataImportBtn" type="button">Markdown / JSON</button></div></details><button id="dataExportBtn" type="button">导出信息库</button><button id="backupExportBtn" type="button">导出完整备份</button><button id="backupRestoreBtn" type="button">恢复完整备份</button><button id="migrateWorkspaceBtn" type="button">迁移旧工作区数据</button></div>
+        </section>
+        <h3>飞书同步</h3>
+        <label class="checkboxLabel"><input id="feishuEnabled" type="checkbox">启用飞书同步</label>
+        <div class="formGrid"><label>App ID<input id="feishuAppId" autocomplete="off"></label><label>App Secret<input id="feishuAppSecret" type="password" autocomplete="new-password"></label></div>
+        <label>飞书多维表格链接<input id="feishuTableUrl" type="url" placeholder="https://example.feishu.cn/base/..."></label>
+        <div class="formGrid"><label>app_token<input id="feishuAppToken" autocomplete="off"></label><label>table_id<input id="feishuTableId" autocomplete="off"></label></div>
+        <details class="moreSettings"><summary>字段映射</summary><div id="mappingFields" class="mappingFields"></div></details>
+        <div id="feishuTestResult" class="managerNotice" hidden></div>
+        <div class="dialogActions"><button id="clearFeishuBtn" type="button" class="danger">清除配置</button><button id="testFeishuBtn" type="button">测试连接</button><span></span><button value="cancel" formnovalidate type="submit">取消</button><button value="default" type="submit" class="primary">保存设置</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="recordsDialog" class="wideDialog recordsDialog">
+      <div class="recordsManager">
+        <header class="dialogHeader"><div><h2>投递记录</h2><span id="todayRecordCount" class="tag"></span></div><div><button id="exportRecordsCsvBtn" type="button">导出 CSV</button><button id="closeRecordsBtn" class="iconButton" title="关闭">x</button></div></header>
+        <div class="recordFilters"><select id="recordStatusFilter"><option value="全部">全部</option><option value="待继续">待继续</option><option value="已投递">已投递</option><option value="已放弃">已放弃</option><option value="同步失败">同步失败</option></select><input id="recordSearchInput" type="search" placeholder="搜索公司名称 / 岗位名称"></div>
+        <div id="recordsList" class="recordsList"></div>
+      </div>
+    </dialog>
+
+    <dialog id="recordDetailDialog" class="wideDialog">
+      <form method="dialog" id="recordDetailForm">
+        <header class="dialogHeader"><h2 id="recordDetailTitle">查看记录</h2><button value="cancel" formnovalidate class="iconButton" title="关闭">x</button></header>
+        <div class="formGrid"><label>公司名称<input id="detailCompany" required></label><label>岗位名称<input id="detailJob" required></label><label>工作地点<input id="detailLocation" required></label><label>状态<select id="detailStatus"><option>填写中</option><option>待继续</option><option>已投递</option><option>已放弃</option></select></label><label>行业<input id="detailIndustry"></label><label>岗位类别/方向<input id="detailRole"></label><label>投递渠道<input id="detailChannel"></label><label>招聘批次<input id="detailBatch"></label><label>企业性质<input id="detailCompanyType"></label><label>优先级<input id="detailPriority"></label><label>内推码<input id="detailReferralCode"></label><label>内推人<input id="detailReferrer"></label></div>
+        <label>岗位链接<input id="detailUrl" type="url"></label><label>岗位 JD<textarea id="detailJd" rows="4"></textarea></label><label>使用简历<input id="detailResume"></label><label>放弃原因<input id="detailAbortReason"></label><label>备注<textarea id="detailNotes" rows="3"></textarea></label>
+        <details class="moreSettings"><summary>更多信息</summary><div id="detailMetadata" class="recordMetadata"></div></details>
+        <p id="localEditWarning" class="formHint">该修改仅更新本地记录，不会修改飞书中已存在的记录。</p>
+        <div class="fieldDialogActions"><span></span><button value="cancel" formnovalidate type="submit">关闭</button><button id="saveRecordEditBtn" value="default" type="submit" class="primary">仅保存本地修改</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="resumeRecordDialog">
+      <div class="resumeRecordPanel"><strong>发现该岗位存在未完成记录</strong><p id="resumeRecordSummary"></p><div class="resumeRecordActions"><button id="newRecordBtn" type="button">新建记录</button><button id="continueRecordBtn" type="button" class="primary">继续原记录</button></div></div>
+    </dialog>
+
+    <dialog id="syncResultDialog">
+      <div class="syncResultManager"><header class="dialogHeader"><h2 id="syncResultTitle">同步结果</h2><button id="closeSyncResultBtn" class="iconButton" title="关闭">x</button></header><p id="syncResultText"></p><div class="syncResultActions"><button id="retrySyncBtn" class="primary">重新同步</button><button id="viewFeishuBtn">查看飞书表格</button><button id="laterSyncBtn">稍后处理</button></div></div>
+    </dialog>
+
+    <dialog id="versionDialog">
+      <form method="dialog" id="versionForm">
+        <header class="dialogHeader"><h2 id="versionDialogTitle">新增版本</h2><button value="cancel" formnovalidate class="iconButton" title="关闭">x</button></header>
+        <label>版本名称<input id="versionName" required maxlength="24"></label>
+        <label id="versionBaseLabel">创建方式<select id="versionBase"><option value="general">基于通用内容（不复制字段）</option><option value="current">复制当前版本已有差异</option></select></label>
+        <label>默认简历（可选）<select id="versionDefaultResume"></select></label>
+        <div class="fieldDialogActions"><span></span><button value="cancel" formnovalidate type="submit">取消</button><button value="default" type="submit" class="primary">保存版本</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="fieldStatusDialog" class="wideDialog">
+      <div class="fieldStatusManager">
+        <header class="dialogHeader"><h2 id="fieldStatusTitle">字段状态</h2><button id="closeFieldStatusBtn" class="iconButton" title="关闭">x</button></header>
+        <div class="compareBlock"><strong>通用内容</strong><p id="fieldGeneralPreview"></p></div>
+        <div id="fieldCurrentBlock" class="compareBlock"><strong id="fieldCurrentLabel">当前版本内容</strong><p id="fieldCurrentPreview"></p></div>
+        <div class="fieldStatusActions"><button id="promoteFieldBtn">将当前内容改为通用内容</button><button id="restoreFieldBtn" class="danger" title="删除当前填写版本的单独修改，重新显示通用内容">恢复使用通用内容</button></div>
+      </div>
+    </dialog>
+
+    <div id="celebration" class="celebration" hidden><div class="checkmark">✓</div><strong id="celebrationText">投递已记录</strong></div>
+    <script type="module" src="src/app.js"></script>
+  </body>
+</html>
